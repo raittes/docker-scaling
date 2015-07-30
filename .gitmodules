@@ -1,0 +1,3 @@
+[submodule "apinfo"]
+	path = apinfo
+	url = https://github.com/raittes/apinfo.git
