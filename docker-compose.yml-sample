@@ -1,0 +1,52 @@
+consul:
+  image: progrium/consul
+  # Replace with your Consul IP
+  command: -server -advertise 10.0.0.20 -bootstrap-expect 1
+  hostname: consul
+  ports:
+    - 8300:8300
+    - 8301:8301
+    - 8301:8301/udp
+    - 8302:8302
+    - 8302:8302/udp
+    - 8400:8400
+    - 8500:8500
+    # DNS on docker
+    - 172.17.42.1:53:53
+    - 172.17.42.1:53:53/udp
+
+
+registrator:
+  image: progrium/registrator:latest
+  # central consul server
+  command: consul://10.0.0.20:8500
+
+  # or link to consul container
+  #command: consul://consul:8500
+  #links:
+  #  - consul
+
+  volumes:
+    - /var/run/docker.sock:/tmp/docker.sock
+  hostname: registrator
+  restart: always
+
+
+haproxy:
+  build: lb-haproxy
+  ports:
+    - 8080:8080
+    - 8081:8081
+  volumes:
+    - ./lb-haproxy:/tmp
+  restart: always
+
+
+app:
+  build: apinfo
+  ports:
+   - 4567
+  volumes:
+   - apinfo:/apinfo
+  #restart: always  # better check the logs
+
