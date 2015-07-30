@@ -1,0 +1,22 @@
+global
+    daemon
+    maxconn 100
+
+defaults
+    mode http
+    balance leastconn
+    retries 3
+    max-keep-alive-queue 1
+    timeout connect  1000
+    timeout client  60000
+    timeout server  60000
+
+listen apinfo_app
+    bind *:8080{{range service "dockerscaling_app"}}
+    server {{.Address}}:{{.Port}} {{.Address}}:{{.Port}} check{{end}}
+
+
+listen stats :8081
+    mode http
+    stats enable
+    stats uri /
