@@ -1,0 +1,18 @@
+upstream app-container { {{range service "dockerscaling_app"}}
+  server {{.Address}}:{{.Port}};{{end}}
+  least_conn;
+}
+
+
+server {
+    listen	80  default_server;
+
+    location / {
+        proxy_pass http://app-container;
+    }
+
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+}

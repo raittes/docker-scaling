@@ -1,0 +1,11 @@
+service nginx status
+
+if [ $? -eq 0 ]; then
+  echo "=> Nginx is reloading..."
+  service nginx reload
+  echo "=> Nginx reloaded!"
+else
+  echo "=> Nginx is starting..."
+  service nginx start
+  echo "=> Nginx started!"
+fi
