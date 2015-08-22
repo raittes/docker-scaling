@@ -34,6 +34,7 @@ registrator:
 
 haproxy:
   build: lb-haproxy
+  command: /usr/local/bin/consul-template -consul 10.0.0.20:8500 -wait 10s:120s -log-level info -template "/tmp/haproxy.ctmpl:/usr/local/etc/haproxy/haproxy.cfg:haproxy-restart"
   ports:
     - 8080:8080
     - 8081:8081
