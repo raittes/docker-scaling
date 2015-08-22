@@ -43,6 +43,16 @@ haproxy:
   restart: always
 
 
+nginx:
+  build: lb-nginx
+  command: /usr/local/bin/consul-template -consul 10.0.0.20:8500 -wait 5s:30s -log-level info -template "/tmp/nginx.ctmpl:/etc/nginx/conf.d/default.conf:nginx-reload"
+  ports:
+    - 8088:80
+  volumes:
+    - ./lb-nginx:/tmp
+  restart: always
+
+
 app:
   build: apinfo
   ports:
