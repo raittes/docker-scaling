@@ -9,12 +9,7 @@ get-external-ip:
 update-consul-ip:
 	@echo Replacing IP by $(IP)
 	cp docker-compose.yml-sample docker-compose.yml
-	sed -i.bak "s@-advertise .* -@-advertise $(IP) -@" docker-compose.yml
-	sed -i.bak "s@consul://.*\..*:8500@consul://$(IP):8500@" docker-compose.yml
-
-	# Haproxy container points to Consul
-	sed -i.bak "s@-consul .*\..*:8500@-consul $(IP):8500@" lb-haproxy/Dockerfile
-
+	sed -i.bak "s@10.0.0.20@$(IP)@g" docker-compose.yml
 
 build:
 	make update-consul-ip

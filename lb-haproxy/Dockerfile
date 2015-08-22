@@ -1,26 +1,17 @@
-FROM haproxy
+FROM haproxy:latest
 MAINTAINER raittes@gmail.com
 
-RUN apt-get -y update && \
-    DEBIAN_FRONTEND=noninteractive apt-get -y install wget unzip make gcc git
+# FROM asteris/consul-template
+ENV CONSUL_TEMPLATE_VERSION 0.10.0
+ADD https://github.com/hashicorp/consul-template/releases/download/v${CONSUL_TEMPLATE_VERSION}/consul-template_${CONSUL_TEMPLATE_VERSION}_linux_amd64.tar.gz /
 
-# Install GO
-RUN cd /tmp && \
-    wget --no-check-certificate https://storage.googleapis.com/golang/go1.4.2.linux-amd64.tar.gz && \
-    tar xf go1.4.2.linux-amd64.tar.gz && \
-    mv go /usr/local/go && \
-    cd /usr/local/go/src/&& ./make.bash && \
-    ln -sf /usr/local/go/bin/go /bin/go
+RUN tar zxvf consul-template_${CONSUL_TEMPLATE_VERSION}_linux_amd64.tar.gz && \
+    mv consul-template_${CONSUL_TEMPLATE_VERSION}_linux_amd64/consul-template /usr/local/bin/consul-template &&\
+    rm -rf /consul-template_${CONSUL_TEMPLATE_VERSION}_linux_amd64.tar.gz && \
+    rm -rf /consul-template_${CONSUL_TEMPLATE_VERSION}_linux_amd64 && \
+    mkdir -p /consul-template /consul-template/config.d /consul-template/templates
 
-# Install Consul-Template
-RUN cd /opt && \
-    wget --no-check-certificate https://github.com/hashicorp/consul-template/archive/master.zip && \
-    unzip master.zip && \
-    cd consul-template-master && \
-    GOPATH=/usr/local/go/ make
+CMD [ "/usr/local/bin/consul-template"]
+
 
 ADD haproxy-restart /bin/
-
-WORKDIR /opt/consul-template-master
-ENTRYPOINT bin/consul-template -consul 10.0.0.20:8500 -wait 10s:120s -log-level info -template "/tmp/haproxy.ctmpl:/usr/local/etc/haproxy/haproxy.cfg:haproxy-restart"
-
