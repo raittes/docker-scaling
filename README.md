@@ -3,7 +3,7 @@
 This demonstration implements an scalable web-server architecture using Docker containers.
 
   - Tools: docker, docker-compose
-  - Load balancer: HAProxy
+  - Load balancer: HAProxy and Nginx
   - Backend: an simple api
   - Service Catalog: Consul
   - Template handling: Consul-Template
@@ -21,7 +21,8 @@ This demonstration implements an scalable web-server architecture using Docker c
 ``` $ make demo ```
 
 #### URLs
-  - Frontend: [http://localhost:8080](http://localhost:8080)
+  - Nginx LB: [http://localhost:8088](http://localhost:8088)
+  - HAProxy LB: [http://localhost:8080](http://localhost:8080)
   - HAProxy Stats: [http://localhost:8081](http://localhost:8081)
   - Consul: [http://localhost:8500](http://localhost:8500)
 
@@ -30,8 +31,8 @@ This demonstration implements an scalable web-server architecture using Docker c
 #### Build images
 ``` $ docker-compose build ```
 
-#### Update Consul IP (in docker-compose.yml)
-``` $ make consul-ip ```
+#### Update Consul IP (generates docker-compose.yml)
+``` $ make update-consul-ip ```
 
 #### Start
 ``` $ docker-compose up ```
